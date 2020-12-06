@@ -16,8 +16,9 @@ public class HotelReservationMain extends HotelServicesImplementation {
                     2. Add New Hotel
                     3. Find Cheapest Hotel
                     4. Find Cheapest Best Rated Hotel
-                    5. Display All Hotels
-                    6. Quit Application""");
+                    5. Find Best Rated Hotel
+                    6. Display All Hotels
+                    7. Quit Application""");
             String usr_choice = scan.nextLine();
             switch (usr_choice) {
                 case "1":
@@ -33,9 +34,12 @@ public class HotelReservationMain extends HotelServicesImplementation {
                     myHotel.findCheapestBestRatedHotel();
                     break;
                 case "5":
-                    myHotel.displayAllHotels();
+                    myHotel.findBestRatedHotel();
                     break;
                 case "6":
+                    myHotel.displayAllHotels();
+                    break;
+                case "7":
                     mainEntry = false;
                     break;
                 default:

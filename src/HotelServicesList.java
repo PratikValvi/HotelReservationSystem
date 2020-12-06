@@ -12,5 +12,6 @@ public interface HotelServicesList {
     public ArrayList<String> getListofDays(String checkInDate, String checkOutDate) throws ParseException;
     public void findCheapestHotel() throws ParseException;
     public void findCheapestBestRatedHotel() throws ParseException;
+    public void findBestRatedHotel() throws ParseException;
     public void displayAllHotels();
 }
