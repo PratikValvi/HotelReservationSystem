@@ -1,30 +1,37 @@
+import java.text.ParseException;
 import java.util.Scanner;
 
 public class HotelReservationMain extends HotelServicesImplementation {
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws ParseException {
         HotelServicesList myHotel = new HotelServicesImplementation();
         Scanner scan = new Scanner(System.in);
         boolean mainEntry = true;
         while (mainEntry) {
-            System.out.println("**********Welcome to Hotel Reservation**********");
+            System.out.println("\n<<<<<<<<<<<<<<<Welcome to Hotel Reservation>>>>>>>>>>>>>>>");
+            System.out.println("----------------------------------------------------------");
             System.out.println();
             System.out.println("""
-                    1. Add Hotel
-                    2. Find Cheapest Hotel
-                    3. Display All Hotels
-                    4. Quit Application""");
+                    1. Add Existing Hotel
+                    2. Add New Hotel
+                    3. Find Cheapest Hotel
+                    4. Display All Hotels
+                    5. Quit Application""");
             String usr_choice = scan.nextLine();
             switch (usr_choice) {
                 case "1":
-                    myHotel.addHotel();
+                    myHotel.addExistingHotels();
                     break;
                 case "2":
-                    myHotel.findCheapestHotel();
+                    myHotel.addHotel();
                     break;
                 case "3":
-                    myHotel.displayAllHotels();
+                    myHotel.findCheapestHotel();
                     break;
                 case "4":
+                    myHotel.displayAllHotels();
+                    break;
+                case "5":
                     mainEntry = false;
                     break;
                 default:

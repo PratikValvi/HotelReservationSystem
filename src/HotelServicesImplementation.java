@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
+
 import static java.util.Collections.sort;
 
 public class HotelServicesImplementation implements HotelServicesList {
@@ -11,23 +12,37 @@ public class HotelServicesImplementation implements HotelServicesList {
     Scanner scan = new Scanner(System.in);
 
     @Override
+    public void addExistingHotels() {
+        hotelList.add(new Hotel("Lakewood",3,110,90,80,80));
+        hotelList.add(new Hotel("Bridgewood",4,160,60,110,50));
+        hotelList.add(new Hotel("Ridgewood",5,220,150,100,40));
+        System.out.println("Existing Hotels are Added Successfully");
+    }
+
+    @Override
     public void addHotel() {
         String hotelName;
-        Hotel hotel = new Hotel();
         System.out.println("Enter Name of Hotel: ");
         do {
             hotelName = scan.nextLine();
         } while (hotelName.isEmpty());
-        System.out.println("Enter Rating(from 1 to 5) of Hotel: ");
+        System.out.println("Enter Rating of Hotel: ");
         int hotelRating = scan.nextInt();
-        System.out.println("Enter Rate for Regular Customers: ");
-        int rateForRegularCustomers = scan.nextInt();
-        System.out.println("Enter Rate for Reward Customers: ");
-        int rateForRewardCustomers = scan.nextInt();
+        System.out.println("Enter Rate on Weekdays for Regular Customer: ");
+        int rate_weekday_regularC = scan.nextInt();
+        System.out.println("Enter Rate on Weekends for Regular Customer: ");
+        int rate_weekend_regularC = scan.nextInt();
+        System.out.println("Enter Rate on Weekdays for Reward Customer: ");
+        int rate_weekday_rewardC = scan.nextInt();
+        System.out.println("Enter Rate on Weekends for Reward Customer: ");
+        int rate_weekend_rewardC = scan.nextInt();
+        Hotel hotel = new Hotel();
         hotel.setName(hotelName);
         hotel.setRating(hotelRating);
-        hotel.setRateForRegularCustomer(rateForRegularCustomers);
-        hotel.setRateForRewardCustomer(rateForRewardCustomers);
+        hotel.setWeekdayRateforRegularCustomer(rate_weekday_regularC);
+        hotel.setWeekendRateforRegularCustomer(rate_weekend_regularC);
+        hotel.setWeekdayRateforRewardCustomer(rate_weekday_rewardC);
+        hotel.setWeekendRateforRewardCustomer(rate_weekend_rewardC);
         hotelList.add(hotel);
         System.out.println("Hotel Added Successfully!!!");
     }
@@ -119,25 +134,60 @@ public class HotelServicesImplementation implements HotelServicesList {
     }
 
     @Override
-    public void findCheapestHotel() {
-        HashMap<String,Integer> mapNameCost = new HashMap<>();
-        ArrayList<Integer> listCost= new ArrayList<>();
+    public ArrayList<String> getListofDays(String checkInDate, String checkOutDate) throws ParseException {
+        LocalDate start = LocalDate.parse(checkInDate);
+        LocalDate end = LocalDate.parse(checkOutDate);
+        List<LocalDate> totalDates = new ArrayList<>();
+        List<String> listOfDates = new ArrayList<>();
+        ArrayList<String> listOfDays = new ArrayList<>();
+        while (!start.isAfter(end)) {
+            totalDates.add(start);
+            start = start.plusDays(1);
+        }
+
+        for (LocalDate date: totalDates) {
+            listOfDates.add(date.toString());
+        }
+
+        for (String date: listOfDates) {
+            String day = getCheckOutDay(date);
+            listOfDays.add(day);
+        }
+        return listOfDays;
+    }
+
+    @Override
+    public void findCheapestHotel() throws ParseException {
         String checkInDate = getCheckInDate();
         String checkOutDate = getCheckOutDate();
-        int getStayDays = getStayDays(checkInDate,checkOutDate);
+        HashMap<String,Integer> mapHotelCost = new HashMap<>();
+        ArrayList<String> listOfDays = getListofDays(checkInDate,checkOutDate);
+        ArrayList<Integer> listOfTotalCost = new ArrayList<>();
         for (Hotel hotel: hotelList) {
+            int totalCost = 0;
             String hotelName = hotel.getName();
-            int hotelCost = hotel.getRateForRegularCustomer() * getStayDays;
-            mapNameCost.put(hotelName,hotelCost);
-            listCost.add(hotelCost);
+            int rateForWeekday = hotel.getWeekdayRateforRegularCustomer();
+            int rateForWeekend = hotel.getWeekendRateforRegularCustomer();
+            for (String day : listOfDays) {
+                if(day.equalsIgnoreCase("Saturday") | day.equalsIgnoreCase("Sunday")) {
+                    totalCost += rateForWeekend;
+                } else {
+                    totalCost += rateForWeekday;
+                }
+            }
+            listOfTotalCost.add(totalCost);
+            mapHotelCost.put(hotelName,totalCost);
         }
-        sort(listCost);
-        int lowestCost = listCost.get(0);
-        for (Map.Entry<String,Integer> entry : mapNameCost.entrySet()) {
+        sort(listOfTotalCost);
+        mapHotelCost.forEach((k,v) -> {
+            System.out.println("Hotel "+k+" Total Amount "+v+"$");
+        });
+        System.out.println();
+        for(Map.Entry<String,Integer> entry : mapHotelCost.entrySet()) {
             String key = entry.getKey();
             int value = entry.getValue();
-            if (value == lowestCost) {
-                System.out.println("\nBest Hotel for you is "+key);
+            if(value == listOfTotalCost.get(0)) {
+                System.out.println("Best Option for you is Hotel "+key+" having Total Amount "+value+"$");
             }
         }
     }
@@ -148,8 +198,13 @@ public class HotelServicesImplementation implements HotelServicesList {
             System.out.println();
             System.out.println("Hotel Name: "+hotel.getName());
             System.out.println("Hotel Rating: "+hotel.getRating());
-            System.out.println("Hotel Rate for Regular Customers: "+hotel.getRateForRegularCustomer());
-            System.out.println("Hotel Rate for Reward Customers: "+hotel.getRateForRewardCustomer());
+            System.out.println("Following Rates are of Per Day:");
+            System.out.println("***Weekday Rates***");
+            System.out.println("\t For Regular Customers: "+hotel.getWeekdayRateforRegularCustomer()+"$");
+            System.out.println("\t For Reward Customers: "+hotel.getWeekdayRateforRewardCustomer()+"$");
+            System.out.println("***Weekend Rates***");
+            System.out.println("\t For Regular Customers: "+hotel.getWeekendRateforRegularCustomer()+"$");
+            System.out.println("\t For Reward Customers: "+hotel.getWeekendRateforRewardCustomer()+"$");
         }
     }
 }
