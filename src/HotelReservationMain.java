@@ -10,17 +10,21 @@ public class HotelReservationMain extends HotelServicesImplementation {
             System.out.println();
             System.out.println("""
                     1. Add Hotel
-                    2. Display All Hotels
-                    3. Quit Application""");
+                    2. Find Cheapest Hotel
+                    3. Display All Hotels
+                    4. Quit Application""");
             String usr_choice = scan.nextLine();
             switch (usr_choice) {
                 case "1":
                     myHotel.addHotel();
                     break;
                 case "2":
-                    myHotel.displayAllHotels();
+                    myHotel.findCheapestHotel();
                     break;
                 case "3":
+                    myHotel.displayAllHotels();
+                    break;
+                case "4":
                     mainEntry = false;
                     break;
                 default:
