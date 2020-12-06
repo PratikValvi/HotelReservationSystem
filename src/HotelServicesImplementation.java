@@ -193,6 +193,45 @@ public class HotelServicesImplementation implements HotelServicesList {
     }
 
     @Override
+    public void findCheapestBestRatedHotel() throws ParseException {
+        String checkInDate = getCheckInDate();
+        String checkOutDate = getCheckOutDate();
+        HashMap<String,Integer> mapHotelCost = new HashMap<>();
+        ArrayList<String> listOfDays = getListofDays(checkInDate,checkOutDate);
+        ArrayList<Integer> listOfTotalCost = new ArrayList<>();
+        for (Hotel hotel: hotelList) {
+            if (hotel.getRating() >= 4) {
+                int totalCost = 0;
+                String hotelName = hotel.getName();
+                int rateForWeekday = hotel.getWeekdayRateforRegularCustomer();
+                int rateForWeekend = hotel.getWeekendRateforRegularCustomer();
+                for (String day : listOfDays) {
+                    if (day.equalsIgnoreCase("Saturday") | day.equalsIgnoreCase("Sunday")) {
+                        totalCost += rateForWeekend;
+                    } else {
+                        totalCost += rateForWeekday;
+                    }
+                }
+                listOfTotalCost.add(totalCost);
+                mapHotelCost.put(hotelName, totalCost);
+            }
+        }
+        sort(listOfTotalCost);
+        mapHotelCost.forEach((k,v) -> {
+            System.out.println("Hotel "+k+" Total Amount "+v+"$");
+        });
+        System.out.println();
+        for(Map.Entry<String,Integer> entry : mapHotelCost.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue();
+            if(value == listOfTotalCost.get(0)) {
+                System.out.println("Best Option for you is Hotel "+key+" having Total Amount "+value+"$");
+            }
+        }
+
+    }
+
+    @Override
     public void displayAllHotels() {
         for (Hotel hotel : hotelList) {
             System.out.println();
