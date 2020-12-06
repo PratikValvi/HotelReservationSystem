@@ -4,8 +4,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
-
-import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
 
 public class HotelServicesImplementation implements HotelServicesList {
@@ -46,6 +44,31 @@ public class HotelServicesImplementation implements HotelServicesList {
         hotel.setWeekendRateforRewardCustomer(rate_weekend_rewardC);
         hotelList.add(hotel);
         System.out.println("Hotel Added Successfully!!!");
+    }
+
+    @Override
+    public boolean checkForRewardCustomer() {
+        boolean rewardCustomer = true;
+        boolean entry = true;
+        while (entry) {
+            System.out.println("Select Customer Type");
+            System.out.println("1. Reward Customer");
+            System.out.println("2. Regular Customer");
+            String user_option = scan.nextLine();
+            if (user_option.equalsIgnoreCase("1")) {
+                System.out.println("Customer is Reward Customer");
+                entry = false;
+                break;
+            } else if(user_option.equalsIgnoreCase("2")) {
+                System.out.println("Customer is Regular Customer");
+                rewardCustomer = false;
+                entry = false;
+                break;
+            } else {
+                System.out.println("Enter Valid Option!!");
+            }
+        }
+        return rewardCustomer;
     }
 
     @Override
@@ -159,6 +182,7 @@ public class HotelServicesImplementation implements HotelServicesList {
 
     @Override
     public void findCheapestHotel() throws ParseException {
+        boolean rewardCustomer = checkForRewardCustomer();
         String checkInDate = getCheckInDate();
         String checkOutDate = getCheckOutDate();
         HashMap<String,Integer> mapHotelCost = new HashMap<>();
@@ -167,8 +191,15 @@ public class HotelServicesImplementation implements HotelServicesList {
         for (Hotel hotel: hotelList) {
             int totalCost = 0;
             String hotelName = hotel.getName();
-            int rateForWeekday = hotel.getWeekdayRateforRegularCustomer();
-            int rateForWeekend = hotel.getWeekendRateforRegularCustomer();
+            int rateForWeekday;
+            int rateForWeekend;
+            if (rewardCustomer) {
+                rateForWeekday = hotel.getWeekdayRateforRewardCustomer();
+                rateForWeekend = hotel.getWeekendRateforRewardCustomer();
+            } else {
+                rateForWeekday = hotel.getWeekdayRateforRegularCustomer();
+                rateForWeekend = hotel.getWeekendRateforRegularCustomer();
+            }
             for (String day : listOfDays) {
                 if(day.equalsIgnoreCase("Saturday") | day.equalsIgnoreCase("Sunday")) {
                     totalCost += rateForWeekend;
@@ -195,6 +226,7 @@ public class HotelServicesImplementation implements HotelServicesList {
 
     @Override
     public void findCheapestBestRatedHotel() throws ParseException {
+        boolean rewardCustomer = checkForRewardCustomer();
         String checkInDate = getCheckInDate();
         String checkOutDate = getCheckOutDate();
         HashMap<String,Integer> mapHotelCost = new HashMap<>();
@@ -204,8 +236,15 @@ public class HotelServicesImplementation implements HotelServicesList {
             if (hotel.getRating() >= 4) {
                 int totalCost = 0;
                 String hotelName = hotel.getName();
-                int rateForWeekday = hotel.getWeekdayRateforRegularCustomer();
-                int rateForWeekend = hotel.getWeekendRateforRegularCustomer();
+                int rateForWeekday;
+                int rateForWeekend;
+                if (rewardCustomer) {
+                    rateForWeekday = hotel.getWeekdayRateforRewardCustomer();
+                    rateForWeekend = hotel.getWeekendRateforRewardCustomer();
+                } else {
+                    rateForWeekday = hotel.getWeekdayRateforRegularCustomer();
+                    rateForWeekend = hotel.getWeekendRateforRegularCustomer();
+                }
                 for (String day : listOfDays) {
                     if (day.equalsIgnoreCase("Saturday") | day.equalsIgnoreCase("Sunday")) {
                         totalCost += rateForWeekend;

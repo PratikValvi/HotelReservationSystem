@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public interface HotelServicesList {
     public void addExistingHotels();
     public void addHotel();
+    public boolean checkForRewardCustomer();
     public String getCheckInDate();
     public String getCheckInDay(String Date) throws ParseException;
     public String getCheckOutDate();
